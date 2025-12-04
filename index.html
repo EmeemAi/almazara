@@ -54,38 +54,64 @@
       .no-scrollbar::-webkit-scrollbar { display: none; }
       .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
       .font-playfair { font-family: 'Playfair Display', serif; }
+      
+      /* Estilo para el mensaje de error en caso de que ocurra */
+      #error-message {
+        display: none;
+        position: fixed;
+        top: 0; left: 0; width: 100%;
+        background: #ef4444; color: white;
+        padding: 20px; z-index: 9999;
+        text-align: center; font-family: sans-serif;
+      }
     </style>
 
-    <!-- 4. React y ReactDOM (Versión de Desarrollo para ver errores, en prod usar .production.min.js) -->
+    <!-- 4. React y ReactDOM -->
     <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
     <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
     
-    <!-- 5. Babel para traducir JSX en el navegador -->
+    <!-- 5. Babel -->
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 
-    <!-- 6. Lucide Icons (Versión UMD) -->
+    <!-- 6. Lucide Icons (CORREGIDO: Usando una versión específica que expone lucideReact globalmente) -->
     <script src="https://unpkg.com/lucide@latest"></script>
-    <script src="https://unpkg.com/lucide-react@latest/dist/umd/lucide-react.js"></script>
+    <script src="https://unpkg.com/lucide-react@0.292.0/dist/umd/lucide-react.min.js"></script>
 <script type="importmap">
 {
   "imports": {
-    "lucide-react": "https://aistudiocdn.com/lucide-react@^0.555.0",
+    "react": "https://aistudiocdn.com/react@^19.2.1",
     "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.1/",
-    "@google/genai": "https://aistudiocdn.com/@google/genai@^1.31.0",
     "react/": "https://aistudiocdn.com/react@^19.2.1/",
-    "react": "https://aistudiocdn.com/react@^19.2.1"
+    "@google/genai": "https://aistudiocdn.com/@google/genai@^1.31.0",
+    "lucide-react": "https://aistudiocdn.com/lucide-react@^0.555.0"
   }
 }
 </script>
 </head>
 <body class="bg-cream-50 text-stone-850 antialiased selection:bg-olive-100 selection:text-olive-900">
+    
+    <!-- Contenedor para mensajes de error críticos -->
+    <div id="error-message"></div>
+
     <div id="root"></div>
+
+    <!-- Script para atrapar errores de carga -->
+    <script>
+      window.onerror = function(message, source, lineno, colno, error) {
+        const errorBox = document.getElementById('error-message');
+        errorBox.style.display = 'block';
+        errorBox.innerHTML = `<strong>Algo salió mal:</strong> ${message}<br><small>Verifica la consola para más detalles.</small>`;
+      };
+    </script>
 
     <!-- AQUÍ EMPIEZA LA APP REACT -->
     <script type="text/babel">
-        // Accedemos a las librerías globales
+        // Accedemos a las librerías globales de forma segura
         const { useState, useEffect } = React;
-        const { TreeDeciduous, ShoppingBag, Plus, Minus, X, Trash2, Phone, ChevronDown } = LucideReact;
+        
+        // CORRECCIÓN CRÍTICA: La librería UMD a veces expone 'lucideReact' (minúscula)
+        const LucideIcons = window.lucideReact; 
+        const { TreeDeciduous, ShoppingBag, Plus, Minus, X, Trash2, Phone, ChevronDown } = LucideIcons;
 
         // --- CONSTANTES ---
         const WHATSAPP_NUMBER = "5491167474299";
@@ -95,18 +121,14 @@
             id: '1',
             title: 'Aceite de Oliva López 500 ML',
             price: 13995.00,
-            // IMPORTANTE: Cuando subas esto a GitHub, asegúrate de subir la foto 'lopez-500.jpg' 
-            // en la misma carpeta. Si no la subes, usa la URL de ejemplo comentada abajo.
-            image: './lopez-500.jpg', 
-            // image: 'https://d3ugyf2ht6aenh.cloudfront.net/stores/001/150/681/products/lata-500-cc1-039c445694a97753e815886866632420-1024-1024.jpg',
+            image: './lopez-500.jpg', // Asegúrate de que esta imagen exista en GitHub
             description: 'Virgen Extra. Sabor frutado medio. Clásico de Bodegas López.'
           },
           {
             id: '2',
             title: 'Aceite de Oliva López 1 Litro',
             price: 23995.00,
-            image: './lopez-1000.jpg',
-            // image: 'https://d3ugyf2ht6aenh.cloudfront.net/stores/001/653/337/products/aceite-oliva-lopez-1lt1-f09b52a44d039f60f816191851167431-640-0.jpg',
+            image: './lopez-1000.jpg', // Asegúrate de que esta imagen exista en GitHub
             description: 'La mejor relación precio-calidad. Lata clásica de 1 litro.'
           },
           {
